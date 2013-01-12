@@ -1,5 +1,6 @@
 # -*- encoding:utf-8 -*-
 from flask import Module, request, render_template, current_app
+from werkzeug.wsgi import LimitedStream
 
 from hello.jobs.job0 import add
 from hello.helpers import utils,parser
@@ -25,17 +26,24 @@ def weixin_get():
 
 @frontend.route('/weixin',methods=['POST'])
 def weixin_post():
-    echostr = request.values.get('echostr')
-    if echostr: return echostr
-    old_msg = request.values.get('msg','hi')
+    content_length = request.headers.get('content-length', type=int)
+    if content_length is not None:
+        stream = LimitedStream(request.environ['wsgi.input'],
+                               content_length)
+        old_msg = stream.read()
+        print old_msg
+    else:
+        old_msg = 'error'
     try:
         msg = parser.parse_txt(old_msg)
     except:
         msg = old_msg
     cookie = current_app.config['cookie']
+    print cookie
     ret = utils.get_msg(msg,cookie)
     try:
         new_ret = parser.build_txt(old_msg,ret)
     except:
         new_ret = ret
+    print new_ret
     return new_ret

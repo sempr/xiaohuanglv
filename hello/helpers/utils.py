@@ -20,8 +20,9 @@ def get_msg(msg,cookie):
     req.add_header('Cookie',cookie)
     r = urllib2.urlopen(req)
     data = r.read()
+    print data
     ret = json.loads(data)
-    if ret['result'] == 100:
+    if ret.get('result') == 100:
         res = ret['response']
         res = res.replace(u'鸡',u'驴')
         return res
