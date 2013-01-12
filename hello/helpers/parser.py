@@ -11,8 +11,14 @@ def parse_txt(data):
 
 def build_txt(data,text):
     r = ET.fromstring(data)
+    from_u = to_u = ''
     for x in r:
         if x.tag == 'Content': x.text = text
+        if x.tag == 'ToUserName': from_u = x.text
+        if x.tag == 'FromUserName': to_u = x.text
+    for x in r:
+        if x.tag == 'ToUserName': x.text = to_u
+        if x.tag == 'FromUserName': x.text = from_u
     child = ET.Element('FuncFlag')
     child.text = '0'
     r.append(child)
