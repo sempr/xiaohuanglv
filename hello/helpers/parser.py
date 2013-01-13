@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from hello.helpers import utils
+import urllib
 
 __author__ = 'Sempr'
 
@@ -13,7 +14,7 @@ def build_txt(data,text):
     r = ET.fromstring(data)
     from_u = to_u = ''
     for x in r:
-        if x.tag == 'Content': x.text = text
+        if x.tag == 'Content': x.text = text.encode('utf8')
         if x.tag == 'ToUserName': from_u = x.text
         if x.tag == 'FromUserName': to_u = x.text
     for x in r:
