@@ -8,8 +8,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 app = Flask(__name__)
-app.register_module(frontend)
-app.register_module(frontend,url_prefix='/test/')
+app.register_blueprint(frontend)
 app.debug = True
 
 # init request

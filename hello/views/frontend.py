@@ -1,11 +1,11 @@
 # -*- encoding:utf-8 -*-
-from flask import Module, request, render_template, current_app
+from flask import Module, request, render_template, current_app, Blueprint
 from werkzeug.wsgi import LimitedStream
 
 from hello.jobs.job0 import add
 from hello.helpers import utils,parser
 
-frontend = Module(__name__)
+frontend = Blueprint('',__name__)
 
 @frontend.route('/add')
 def index():
