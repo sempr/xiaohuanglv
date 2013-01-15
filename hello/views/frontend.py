@@ -3,9 +3,13 @@ from flask import Module, request, render_template, current_app, Blueprint
 from werkzeug.wsgi import LimitedStream
 
 from hello.jobs.job0 import add
-from hello.helpers import utils,parser
+from hello.helpers import utils
 
 frontend = Blueprint('',__name__)
+
+@frontend.route('/test')
+def test():
+    return str(request.host)
 
 @frontend.route('/add')
 def index():
@@ -31,19 +35,17 @@ def weixin_post():
         stream = LimitedStream(request.environ['wsgi.input'],
                                content_length)
         old_msg = stream.read()
-        print old_msg
     else:
         old_msg = 'error'
     try:
-        msg = parser.parse_txt(old_msg)
+        msg = utils.parse_txt(old_msg)
     except:
         msg = old_msg
     cookie = current_app.config['cookie']
-    print cookie
     ret = utils.get_msg(msg,cookie)
+    print msg,ret
     try:
-        new_ret = parser.build_txt(old_msg,ret)
+        new_ret = utils.build_txt(old_msg,ret)
     except:
         new_ret = ret
-    print new_ret
     return new_ret
