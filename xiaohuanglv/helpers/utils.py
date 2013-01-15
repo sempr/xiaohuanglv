@@ -26,8 +26,8 @@ def build_txt(values,text):
 
     new_values = {}
 
-    new_values['ToUserName'] = values['FromUserName']
-    new_values['FromUserName'] = values['ToUserName']
+    new_values['ToUserName'] = values.get('FromUserName','NoneUser')
+    new_values['FromUserName'] = values.get('ToUserName','NoneUser')
     new_values['Content'] = text
     new_values['CreateTime'] = str(int(time.time()))
     new_values['MsgType'] = 'text'
@@ -69,3 +69,30 @@ if __name__ == '__main__':
     print get_msg('小黄鸡!',cookie)
 
 
+def translate(content):
+    url = 'http://fanyi.youdao.com/translate'
+    args = {
+        'keyfrom':'deskdict.main',
+        'xmlVersion':'1.4',
+        'dogVersion':'1.0',
+        'ue':'utf8',
+        'type':'AUTO',
+        'doctype':'xml',
+        'client':'deskdict',
+        'id':'8acd376b34ed1b740',
+        'vendor':'heima',
+        'in':'YoudaoDict_qq_5.4.40.9488',
+        'appVer':'5.4.40.9488',
+        'appZengqiang':'0',
+        'smartresult':'dict',
+        'smartresult':'rule',
+        'i':content
+    }
+    ret = urllib2.urlopen(url,urllib.urlencode(args)).read()
+    r = ET.fromstring(ret)
+    res = []
+    for p in r:
+        pp = dict([(x.tag,x.text) for x in p[0]])
+        res.append(pp)
+    ret = '\n'.join([x['src']+":"+x['tgt'] for x in res])
+    return ret
