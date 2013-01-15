@@ -1,8 +1,8 @@
 # -*- encoding:utf-8 -*-
 from flask import Flask
 import sys
-from hello.views.frontend import frontend
-from hello.helpers.utils import get_cookie
+from xiaohuanglv.views.frontend import frontend
+from xiaohuanglv.helpers.utils import get_cookie
 
 reload(sys)
 sys.setdefaultencoding('utf8')

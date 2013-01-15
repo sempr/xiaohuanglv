@@ -2,8 +2,8 @@
 from flask import Module, request, render_template, current_app, Blueprint
 from werkzeug.wsgi import LimitedStream
 
-from hello.jobs.job0 import add
-from hello.helpers import utils
+from xiaohuanglv.jobs.job0 import add
+from xiaohuanglv.helpers import utils
 
 frontend = Blueprint('',__name__)
 
@@ -37,15 +37,19 @@ def weixin_post():
         old_msg = stream.read()
     else:
         old_msg = 'error'
+    print old_msg
     try:
         msg = utils.parse_txt(old_msg)
     except:
-        msg = old_msg
+        msg = {}
+    if msg.get('MsgType') != 'text':
+        return utils.build_txt(msg,'我只认识文字哒，图片地理位置以及表情神马的我都不认得哦~')
+
     cookie = current_app.config['cookie']
-    ret = utils.get_msg(msg,cookie)
+    ret = utils.get_msg(msg['Content'],cookie)
     print msg,ret
     try:
-        new_ret = utils.build_txt(old_msg,ret)
+        new_ret = utils.build_txt(msg,ret)
     except:
         new_ret = ret
     return new_ret

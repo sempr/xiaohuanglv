@@ -4,7 +4,7 @@
 from flask import Flask
 from flaskext.actions import Manager
 import settings
-from hello import app
+from xiaohuanglv import app
 import sys
 
 app.config.from_object(settings)
