@@ -6,6 +6,10 @@ from xiaohuanglv.helpers import utils
 
 frontend = Blueprint('',__name__)
 
+@frontend.route('/')
+def index():
+    return 'Hello World!'
+
 @frontend.route('/test')
 def test():
     return str(request.host)
