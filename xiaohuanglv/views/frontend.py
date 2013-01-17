@@ -2,7 +2,6 @@
 from flask import Module, request, render_template, current_app, Blueprint
 from werkzeug.wsgi import LimitedStream
 
-from xiaohuanglv.jobs.job0 import add
 from xiaohuanglv.helpers import utils
 
 frontend = Blueprint('',__name__)
@@ -11,18 +10,8 @@ frontend = Blueprint('',__name__)
 def test():
     return str(request.host)
 
-@frontend.route('/add')
-def index():
-    a = request.values.get('a')
-    b = request.values.get('b')
-    if not a: a = 0
-    if not b: b = 0
-    a,b = int(a),int(b)
-    for g in xrange(10):
-        add.delay(g,a,b)
-    return render_template('layout.html',msg='ok!')
-
 @frontend.route('/weixin',methods=['GET'])
+@frontend.route('/fanyi',methods=['GET'])
 def weixin_get():
     echostr = request.values.get('echostr')
     if echostr: return echostr
@@ -54,7 +43,7 @@ def get_input_data():
         msg = {'Content':text, 'MsgType':'text'}
     return msg
 
-@frontend.route('/fanyi',methods=['POST','GET'])
+@frontend.route('/fanyi',methods=['POST'])
 def fanyi_post():
     msg = get_input_data()
     if msg.get('MsgType') != 'text': return utils.build_txt(msg,'我只认识文字哒，图片地理位置以及表情神马的我都不认得哦~')
