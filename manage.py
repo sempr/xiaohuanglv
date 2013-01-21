@@ -8,8 +8,7 @@ from xiaohuanglv import app
 import sys
 
 app.config.from_object(settings)
-manager = Manager(app,default_server_actions=True)
+manager = Manager(app, default_server_actions=True)
 
 if __name__ == "__main__":
     manager.run()
-

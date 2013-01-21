@@ -15,27 +15,30 @@ ads = [
     u'主淫主淫，他们不教我学好，只教我发广告！不好玩啊！',
 ]
 
+
 def parse_txt(data):
     r = ET.fromstring(data)
     ret = dict()
-    for x in r: ret[x.tag] = x.text
+    for x in r:
+        ret[x.tag] = x.text
     return ret
 
-def build_txt(values,text):
+
+def build_txt(values, text):
     r = ET.Element('xml')
 
     new_values = {}
 
-    new_values['ToUserName'] = values.get('FromUserName','NoneUser')
-    new_values['FromUserName'] = values.get('ToUserName','NoneUser')
+    new_values['ToUserName'] = values.get('FromUserName', 'NoneUser')
+    new_values['FromUserName'] = values.get('ToUserName', 'NoneUser')
     new_values['Content'] = text
     new_values['CreateTime'] = str(int(time.time()))
     new_values['MsgType'] = 'text'
     new_values['FuncFlag'] = '0'
-    for k,v in new_values.items():
-        x = ET.SubElement(r,k)
+    for k, v in new_values.items():
+        x = ET.SubElement(r, k)
         x.text = v
-    ret = ET.tostring(r,encoding='utf8')
+    ret = ET.tostring(r, encoding='utf8')
     return ret
 
 
@@ -45,54 +48,57 @@ def get_cookie():
     cookie = r.headers['Set-Cookie'].split(';')[0]
     return cookie
 
-def get_msg(msg,cookie):
-    data = urllib.urlencode({'msg':msg,'lc':'ch'})
+
+def get_msg(msg, cookie):
+    data = urllib.urlencode({'msg': msg, 'lc': 'ch'})
     url = "http://www.simsimi.com/func/req?" + data
     req = urllib2.Request(url)
-    req.add_header('Referer','http://www.simsimi.com/talk.htm')
-    req.add_header('Cookie',cookie)
+    req.add_header('Referer', 'http://www.simsimi.com/talk.htm')
+    req.add_header('Cookie', cookie)
     r = urllib2.urlopen(req)
     data = r.read()
     ret = json.loads(data)
     if ret.get('result') == 100:
         res = ret['response']
-        res = res.replace(u'鸡',u'驴')
-        if res.find(u'微信')>=0: res=random.sample(ads,1)[0]
+        res = res.replace(u'鸡', u'驴')
+        if res.find(u'微信') >= 0:
+            res = random.sample(ads, 1)[0]
         return res
-    else: return '休息啦！不要吵！烦死了!'
+    else:
+        return '休息啦！不要吵！烦死了!'
 
 if __name__ == '__main__':
-    values = dict(ToUserName='1',FromUserName='2')
-    print build_txt(values,'hello!')
+    values = dict(ToUserName='1', FromUserName='2')
+    print build_txt(values, 'hello!')
 
     cookie = get_cookie()
-    print get_msg('小黄鸡!',cookie)
+    print get_msg('小黄鸡!', cookie)
 
 
 def translate(content):
     url = 'http://fanyi.youdao.com/translate'
     args = {
-        'keyfrom':'deskdict.main',
-        'xmlVersion':'1.4',
-        'dogVersion':'1.0',
-        'ue':'utf8',
-        'type':'AUTO',
-        'doctype':'xml',
-        'client':'deskdict',
-        'id':'8acd376b34ed1b740',
-        'vendor':'heima',
-        'in':'YoudaoDict_qq_5.4.40.9488',
-        'appVer':'5.4.40.9488',
-        'appZengqiang':'0',
-        'smartresult':'dict',
-        'smartresult':'rule',
-        'i':content
+        'keyfrom': 'deskdict.main',
+        'xmlVersion': '1.4',
+        'dogVersion': '1.0',
+        'ue': 'utf8',
+        'type': 'AUTO',
+        'doctype': 'xml',
+        'client': 'deskdict',
+        'id': '8acd376b34ed1b740',
+        'vendor': 'heima',
+        'in': 'YoudaoDict_qq_5.4.40.9488',
+        'appVer': '5.4.40.9488',
+        'appZengqiang': '0',
+        'smartresult': 'dict',
+        'smartresult': 'rule',
+        'i': content
     }
-    ret = urllib2.urlopen(url,urllib.urlencode(args)).read()
+    ret = urllib2.urlopen(url, urllib.urlencode(args)).read()
     r = ET.fromstring(ret)
     res = []
     for p in r:
-        pp = dict([(x.tag,x.text) for x in p[0]])
+        pp = dict([(x.tag, x.text) for x in p[0]])
         res.append(pp)
     ret = '\n'.join([x['src']+":"+x['tgt'] for x in res])
     return ret
